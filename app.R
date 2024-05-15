@@ -124,6 +124,16 @@ server <- function(input, output, session) {
     query <- paste0("DELETE FROM app_usuarios WHERE id = ", input$remove_id, ";")
     dbExecute(con(), query)
   })
+  
+  # Atualiza a lista de usuários quando o arquivo do banco de dados é alterado
+  observe({
+    reactiveFileReader(intervalMillis = 1000, session, "usuarios.db", readFunc = function(filePath) {
+      invalidateLater(1000)
+      query <- "SELECT nome FROM app_usuarios;"
+      users <- dbGetQuery(con(), query)$nome
+      updateSelectizeInput(session, "update_nome", choices = users)
+    })
+  })
 }
 
 # Run the application
