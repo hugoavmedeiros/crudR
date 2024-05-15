@@ -42,21 +42,21 @@ ui <- fluidPage(
   # Formulário para atualizar usuário
   sidebarPanel(
     h4("Atualizar Usuário"),
-    selectizeInput("update_nome", "Nome do Usuário:", choices = NULL),
-    textInput("update_app", "App:"),
-    textInput("update_senha", "Senha:"),
-    textInput("update_secretaria", "Secretaria:"),
-    textInput("update_inicio", "Início:"),
-    textInput("update_expira", "Expira:"),
-    textInput("update_admin", "Admin:"),
-    textInput("update_comment", "Comentário:"),
+    selectizeInput("update_nome", "Nome do Usuário:", choices = "", selected = ""),
+    textInput("update_app", "App:", value = ""),
+    textInput("update_senha", "Senha:", value = ""),
+    textInput("update_secretaria", "Secretaria:", value = ""),
+    textInput("update_inicio", "Início:", value = ""),
+    textInput("update_expira", "Expira:", value = ""),
+    textInput("update_admin", "Admin:", value = ""),
+    textInput("update_comment", "Comentário:", value = ""),
     actionButton("updateUserBtn", "Atualizar Usuário")
   ),
   
   # Botão para remover usuário
   sidebarPanel(
     h4("Remover Usuário"),
-    selectizeInput("remove_nome", "Nome do Usuário:", choices = NULL),
+    selectizeInput("remove_nome", "Nome do Usuário:", choices = "", selected = ""),
     actionButton("removeUserBtn", "Remover Usuário")
   )
 )
@@ -69,34 +69,49 @@ server <- function(input, output, session) {
   observe({
     query <- "SELECT nome FROM app_usuarios;"
     users <- dbGetQuery(con(), query)$nome
-    updateSelectizeInput(session, "update_nome", choices = users)
-    updateSelectizeInput(session, "remove_nome", choices = users)
+    updateSelectizeInput(session, "update_nome", choices = users, selected = "")
+    updateSelectizeInput(session, "remove_nome", choices = users, selected = "")
   })
   
   # Atualiza os outros campos ao selecionar um nome de usuário para atualização
   observeEvent(input$update_nome, {
-    query <- paste0("SELECT * FROM app_usuarios WHERE nome = '", input$update_nome, "';")
-    user_data <- dbGetQuery(con(), query)
-    if (nrow(user_data) > 0) {
-      updateTextInput(session, "update_app", value = user_data$app)
-      updateTextInput(session, "update_senha", value = user_data$senha)
-      updateTextInput(session, "update_secretaria", value = user_data$secretaria)
-      updateTextInput(session, "update_inicio", value = user_data$inicio)
-      updateTextInput(session, "update_expira", value = user_data$expira)
-      updateTextInput(session, "update_admin", value = user_data$admin)
-      updateTextInput(session, "update_comment", value = user_data$comment)
+    if (input$update_nome != "") {
+      query <- paste0("SELECT * FROM app_usuarios WHERE nome = '", input$update_nome, "';")
+      user_data <- dbGetQuery(con(), query)
+      if (nrow(user_data) > 0) {
+        updateTextInput(session, "update_app", value = user_data$app)
+        updateTextInput(session, "update_senha", value = user_data$senha)
+        updateTextInput(session, "update_secretaria", value = user_data$secretaria)
+        updateTextInput(session, "update_inicio", value = user_data$inicio)
+        updateTextInput(session, "update_expira", value = user_data$expira)
+        updateTextInput(session, "update_admin", value = user_data$admin)
+        updateTextInput(session, "update_comment", value = user_data$comment)
+      }
+    } else {
+      updateTextInput(session, "update_app", value = "")
+      updateTextInput(session, "update_senha", value = "")
+      updateTextInput(session, "update_secretaria", value = "")
+      updateTextInput(session, "update_inicio", value = "")
+      updateTextInput(session, "update_expira", value = "")
+      updateTextInput(session, "update_admin", value = "")
+      updateTextInput(session, "update_comment", value = "")
     }
   })
   
   # Remover usuário
   observeEvent(input$removeUserBtn, {
-    query <- paste0("DELETE FROM app_usuarios WHERE nome = '", input$remove_nome, "';")
-    dbExecute(con(), query)
-    
-    # Atualiza as opções do selectizeInput de remover usuário
-    query <- "SELECT nome FROM app_usuarios;"
-    users <- dbGetQuery(con(), query)$nome
-    updateSelectizeInput(session, "remove_nome", choices = users)
+    if (input$remove_nome != "") {
+      query <- paste0("DELETE FROM app_usuarios WHERE nome = '", input$remove_nome, "';")
+      dbExecute(con(), query)
+      
+      # Atualiza as opções do selectizeInput de remover usuário
+      query <- "SELECT nome FROM app_usuarios;"
+      users <- dbGetQuery(con(), query)$nome
+      updateSelectizeInput(session, "remove_nome", choices = users, selected = "")
+      
+      # Atualiza as opções do selectizeInput de atualizar usuário
+      updateSelectizeInput(session, "update_nome", choices = users, selected = "")
+    }
   })
   
   # Adicionar usuário
@@ -117,7 +132,10 @@ server <- function(input, output, session) {
     # Atualiza as opções do selectizeInput de remover usuário
     query <- "SELECT nome FROM app_usuarios;"
     users <- dbGetQuery(con(), query)$nome
-    updateSelectizeInput(session, "remove_nome", choices = users)
+    updateSelectizeInput(session, "remove_nome", choices = users, selected = "")
+    
+    # Atualiza as opções do selectizeInput de atualizar usuário
+    updateSelectizeInput(session, "update_nome", choices = users, selected = "")
   })
   
   # Atualizar usuário
