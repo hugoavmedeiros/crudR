@@ -101,8 +101,10 @@ server <- function(input, output, session) {
   # Remover usuário
   observeEvent(input$removeUserBtn, {
     if (input$remove_nome != "") {
+      dbBegin(con(), immediate = TRUE)
       query <- paste0("DELETE FROM app_usuarios WHERE nome = '", input$remove_nome, "';")
       dbExecute(con(), query)
+      dbCommit(con())
       
       # Atualiza as opções do selectizeInput de remover usuário
       query <- "SELECT nome FROM app_usuarios;"
@@ -116,6 +118,7 @@ server <- function(input, output, session) {
   
   # Adicionar usuário
   observeEvent(input$addUserBtn, {
+    dbBegin(con(), immediate = TRUE)
     query <- paste0(
       "INSERT INTO app_usuarios (nome, app, senha, secretaria, inicio, expira, admin, comment) VALUES ('",
       input$nome, "', '",
@@ -128,6 +131,7 @@ server <- function(input, output, session) {
       input$comment, "');"
     )
     dbExecute(con(), query)
+    dbCommit(con())
     
     # Atualiza as opções do selectizeInput de remover usuário
     query <- "SELECT nome FROM app_usuarios;"
@@ -140,6 +144,7 @@ server <- function(input, output, session) {
   
   # Atualizar usuário
   observeEvent(input$updateUserBtn, {
+    dbBegin(con(), immediate = TRUE)
     query <- paste0(
       "UPDATE app_usuarios SET ",
       "app = '", input$update_app, "', ",
@@ -152,6 +157,7 @@ server <- function(input, output, session) {
       "WHERE nome = '", input$update_nome, "';"
     )
     dbExecute(con(), query)
+    dbCommit(con())
   })
 }
 
