@@ -56,7 +56,7 @@ ui <- fluidPage(
   # Botão para remover usuário
   sidebarPanel(
     h4("Remover Usuário"),
-    numericInput("remove_id", "ID do Usuário:", value = 0, min = 1),
+    selectizeInput("remove_nome", "Nome do Usuário:", choices = NULL),
     actionButton("removeUserBtn", "Remover Usuário")
   )
 )
@@ -70,6 +70,7 @@ server <- function(input, output, session) {
     query <- "SELECT nome FROM app_usuarios;"
     users <- dbGetQuery(con(), query)$nome
     updateSelectizeInput(session, "update_nome", choices = users)
+    updateSelectizeInput(session, "remove_nome", choices = users)
   })
   
   # Atualiza os outros campos ao selecionar um nome de usuário para atualização
@@ -87,6 +88,17 @@ server <- function(input, output, session) {
     }
   })
   
+  # Remover usuário
+  observeEvent(input$removeUserBtn, {
+    query <- paste0("DELETE FROM app_usuarios WHERE nome = '", input$remove_nome, "';")
+    dbExecute(con(), query)
+    
+    # Atualiza as opções do selectizeInput de remover usuário
+    query <- "SELECT nome FROM app_usuarios;"
+    users <- dbGetQuery(con(), query)$nome
+    updateSelectizeInput(session, "remove_nome", choices = users)
+  })
+  
   # Adicionar usuário
   observeEvent(input$addUserBtn, {
     query <- paste0(
@@ -101,6 +113,11 @@ server <- function(input, output, session) {
       input$comment, "');"
     )
     dbExecute(con(), query)
+    
+    # Atualiza as opções do selectizeInput de remover usuário
+    query <- "SELECT nome FROM app_usuarios;"
+    users <- dbGetQuery(con(), query)$nome
+    updateSelectizeInput(session, "remove_nome", choices = users)
   })
   
   # Atualizar usuário
@@ -117,22 +134,6 @@ server <- function(input, output, session) {
       "WHERE nome = '", input$update_nome, "';"
     )
     dbExecute(con(), query)
-  })
-  
-  # Remover usuário
-  observeEvent(input$removeUserBtn, {
-    query <- paste0("DELETE FROM app_usuarios WHERE id = ", input$remove_id, ";")
-    dbExecute(con(), query)
-  })
-  
-  # Atualiza a lista de usuários quando o arquivo do banco de dados é alterado
-  observe({
-    reactiveFileReader(intervalMillis = 1000, session, "usuarios.db", readFunc = function(filePath) {
-      invalidateLater(1000)
-      query <- "SELECT nome FROM app_usuarios;"
-      users <- dbGetQuery(con(), query)$nome
-      updateSelectizeInput(session, "update_nome", choices = users)
-    })
   })
 }
 
