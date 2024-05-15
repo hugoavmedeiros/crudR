@@ -1,9 +1,17 @@
 library(shiny)
 library(DBI)
+library(RSQLite)
 
 # Função para conectar ao banco de dados SQLite
 connect_to_database <- function() {
   con <- dbConnect(RSQLite::SQLite(), "usuarios.db")
+  # Definir um manipulador para tratar de forma customizada o bloqueio do banco de dados
+  dbGetQuery(con, "PRAGMA busy_timeout = 3000;") # Define um tempo limite de 3000 ms (3 segundos)
+  sqliteSetBusyHandler(con, function(nAttempts) {
+    print(paste("O banco de dados está bloqueado. Tentativa", nAttempts))
+    Sys.sleep(0.1) # Espera um pouco antes de tentar novamente
+    return(TRUE)  # Retorna TRUE para tentar novamente
+  })
   # Cria a tabela se ela não existir
   dbExecute(con, "
     CREATE TABLE IF NOT EXISTS app_usuarios (
@@ -103,7 +111,6 @@ server <- function(input, output, session) {
       query <- "SELECT nome FROM app_usuarios;"
       users <- dbGetQuery(con(), query)$nome
       updateSelectizeInput(session, "update_nome", choices = users, selected = "")
-
     }
   })
   
@@ -127,9 +134,6 @@ server <- function(input, output, session) {
     # Atualiza as opções do selectizeInput de remover usuário
     query <- "SELECT nome FROM app_usuarios;"
     users <- dbGetQuery(con(), query)$nome
-    updateSelectizeInput(session, "update_nome", choices = users, selected = "")
-    
-    # Atualiza as opções do selectizeInput de atualizar usuário
     updateSelectizeInput(session, "update_nome", choices = users, selected = "")
   })
   
