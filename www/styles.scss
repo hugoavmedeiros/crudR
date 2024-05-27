@@ -1,0 +1,239 @@
+.govpe-logo {
+  margin-left: 5px;
+  color: var(--bs-primary);
+}
+.mlk-table {
+  font-size: .75rem;
+  overflow-x: scroll
+}
+
+.btn-mlk-table {
+  padding: 0px 5px;
+  font-size: inherit !important;
+}
+
+.form-control {
+    font-size: .75rem !important;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.mlk-sidebar-font > div {
+  font-size: .75rem;
+}
+
+.selectize-input {
+  font-size: .75rem !important;
+}
+.form-control {
+    font-size: .75rem !important;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.selectize-input {
+  font-size: .75rem !important;
+  font-weight: 400;
+  line-height: 1;
+}
+.selectize-dropdown {
+  font-size: .75rem !important;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.inicial {
+  font-size: .75rem;
+}
+
+
+.filtro-label {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--bs-green);
+  margin-bottom: 10px;
+  border-bottom: 1px solid;
+  border-width: 3px;
+}
+
+
+/* Status nas tabelas */
+
+.tag {
+  display: inline-block;
+  padding: 0.125rem 0.75rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-em-execucao {
+  background: hsl(116, 60%, 90%);
+  color: hsl(116, 30%, 25%);
+}
+
+.status-fim-de-vigencia {
+  background: hsl(230, 70%, 90%);
+  color: hsl(230, 45%, 30%);
+}
+
+.status-cancelado {
+  background: hsl(350, 70%, 90%);
+  color: hsl(350, 45%, 30%);
+}
+
+.sobre-pikchr {
+  overflow: visible !important;
+}
+
+.cards_sobre > div {
+  height: auto !important;
+}
+
+img.mlk-userbox {
+  width: auto;
+  height: 100px;
+  border-radius: 50%;
+  vertical-align: middle;
+  border-style: none;
+}
+
+.mlk-header-center > .rt-th-inner > .rt-sort-header {
+  justify-content: center !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.mlk-alert0 {
+  background: #4400FF !important;
+}
+
+.mlk-alert1 {
+  background: #1F64FF !important;
+}
+
+.mlk-alert2 {
+  background: #14B6FF !important;
+}
+
+.mlk-alert3 {
+  background: #35E9C3 !important;
+}
+
+.mlk-alert3n {
+  background: #a70000 !important;
+}
+
+.mlk-alert2n {
+  background: #ff5252 !important;
+}
+
+.mlk-alert1n {
+  background: #ff7b7b !important;
+}
+
+.mlk-alert0n {
+  background: #ffbaba !important;
+}
+
+.mlk-mapa {
+  padding: 0;
+}
+
+div.nopad .value-box-area {
+  padding: 0;
+}
+
+#backloadmessage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99997; //105;
+  width: 100%;
+  height: 100%;
+  background: forestGreen;
+  opacity: 0.5;
+}
+
+
+#loadmessage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-height: fit-content !important;
+  min-width: fit-content !important;
+  max-height: fit-content !important;
+  max-width: fit-content !important;
+  transform: translate(-50%, -50%);
+  z-index: 99998; //105;
+  background-color: #F5EEF8;
+  border-width: 1em;
+  padding: 25px;
+  border-radius: 25px;
+  border: 2px solid #C39BD3;
+  text-align: center;
+  opacity: .75;
+}
+
+#loadpanel {
+  position: fixed;
+  top: 25%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+  z-index: 10005;
+  width: 25%;
+  display: block;
+  background-color: #F5EEF8;
+  border-width: 1em;
+  padding: 25px;
+  border-radius: 25px;
+  border: 2px solid #C39BD3;
+  height: 25%;
+  text-align: center;
+  opacity: .75;
+}
+
+
+#L7 {
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  display:inline-block;
+}
+
+/*
+.navbar {
+  margin-bottom: 5px;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: $border-bottom-width;
+  border-bottom-style: solid;
+  border-bottom-color: $border-color;
+  background: $primary;
+}
+
+.nav.navbar-nav.shiny-tab-input.shiny-bound-input {
+  margin-left: 30px;
+}
+
+.col-sm-6 {
+  margin-bottom: 220px;
+}
+
+a {
+  color: $primary;
+  font-weight: bold;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background: white;
+  font-weight: 800;
+}
+*/

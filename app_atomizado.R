@@ -6,7 +6,7 @@ library(RSQLite)
 connect_to_database <- function() {
   con <- dbConnect(RSQLite::SQLite(), "usuarios.db")
   # Definir um manipulador para tratar de forma customizada o bloqueio do banco de dados
-  dbGetQuery(con, "PRAGMA busy_timeout = 3000;") # Define um tempo limite de 3000 ms (3 segundos)
+  dbGetQuery(con, "PRAGMA busy_timeout = 5000;") # Define um tempo limite de 3000 ms (3 segundos)
   sqliteSetBusyHandler(con, function(nAttempts) {
     print(paste("O banco de dados está bloqueado. Tentativa", nAttempts))
     Sys.sleep(0.1) # Espera um pouco antes de tentar novamente
@@ -115,27 +115,43 @@ server <- function(input, output, session) {
   })
   
   # Adicionar usuário
+  # Adicionar usuário
   observeEvent(input$addUserBtn, {
-    dbBegin(con(), immediate = TRUE)
-    query <- paste0(
-      "INSERT INTO app_usuarios (nome, app, senha, secretaria, inicio, expira, admin, comment) VALUES ('",
-      input$nome, "', '",
-      input$app, "', '",
-      input$senha, "', '",
-      input$secretaria, "', '",
-      input$inicio, "', '",
-      input$expira, "', '",
-      input$admin, "', '",
-      input$comment, "');"
-    )
-    dbExecute(con(), query)
-    dbCommit(con())
-    
-    # Atualiza as opções do selectizeInput de remover usuário
-    query <- "SELECT nome FROM app_usuarios;"
-    users <- dbGetQuery(con(), query)$nome
-    updateSelectizeInput(session, "update_nome", choices = users, selected = "")
+    # Verifica se o nome de usuário já existe na base de dados
+    user_exists <- dbGetQuery(con(), paste0("SELECT COUNT(*) FROM app_usuarios WHERE nome = '", input$nome, "';"))[[1]]
+    if (user_exists == 0) {
+      # Se o nome de usuário não existir, adiciona o usuário
+      dbBegin(con(), immediate = TRUE)
+      query <- paste0(
+        "INSERT INTO app_usuarios (nome, app, senha, secretaria, inicio, expira, admin, comment) VALUES ('",
+        input$nome, "', '",
+        input$app, "', '",
+        input$senha, "', '",
+        input$secretaria, "', '",
+        input$inicio, "', '",
+        input$expira, "', '",
+        input$admin, "', '",
+        input$comment, "');"
+      )
+      dbExecute(con(), query)
+      dbCommit(con())
+      
+      # Atualiza as opções do selectizeInput de remover usuário
+      query <- "SELECT nome FROM app_usuarios;"
+      users <- dbGetQuery(con(), query)$nome
+      updateSelectizeInput(session, "update_nome", choices = users, selected = "")
+    } else {
+      # Se o nome de usuário já existir, exibe uma mensagem de erro
+      showModal(modalDialog(
+        title = "Erro",
+        "O nome de usuário já existe na base de dados.",
+        footer = modalButton("Fechar"),
+        easyClose = T,
+        fade = T
+      ))
+    }
   })
+  
   
   # Atualizar usuário
   observeEvent(input$updateUserBtn, {
